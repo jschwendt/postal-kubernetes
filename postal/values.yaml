@@ -5,7 +5,7 @@
 postal:
   ## Override the name of the Chart.
   ##
-  # nameOverride:
+  # nameOverride: Orrick Postal Test
 
   ## A postal configuration yaml to apply on top of postal's default configuration
   ##
@@ -18,7 +18,8 @@ postal:
   ## Postal image version.
   ## ref: https://hub.docker.com/r/linkyard/postal/tags/
   ##
-  imageTag: "1.0.2"
+  # imageTag: "1.0.2"
+  imageTag: "latest"
 
   ## Specify a imagePullPolicy: 'Always' if imageTag is 'latest', else set to 'IfNotPresent'.
   ## ref: https://kubernetes.io/docs/user-guide/images/#pre-pulling-images
@@ -150,9 +151,8 @@ postal:
     -----END PRIVATE KEY-----
 
   ## The secret key for rails.
-  ## Should be changed from the default.
   ##  
-  railsSecretKey: a15278f9d5b30e0c2bae4c1051eff9abd4e723dc4636a061926c9ba70242192ec75bb127de0efc42a113d65ec902898d060b9a9a9078acee2dde6c40875c3b176fddba03989684f44f864c78194c28d55be6f1991bd7cfa6b93da78ee7a41e0b870321488952b12d985bcf306273d9cdd36c6ca455399dfd4796388545f8ec5acb385ff3c057209ddde254e18df143d0c4375cdffe2b0f4d82f0c501d767bfb33a561c0c5d0c46b906ef0071e29ef0f47acee1ca395c9362f924523f70fc9bd5e9d03956af52fc401c0eee307783be5762ebb1c94bd755b8a6a9b17051d7a63a8f1c0344a92a3756b3f29a25b45074d6f9ceb6ca7d92da0a941431dbfdd45e
+  railsSecretKey: aVSXuhVaXpbVdUas3XDEh6PSRewcEVqkN35mfWThXsqtjTxW8TuAU45rBaJxeBznQqa5BvD4dXtyDPvCYZaU9k3cR2xyZFnQCfQ8qVkVXaxK9LQWNkx3J2WvgwNfbP6GPK3L7JZR7yBRsrmE5avy3e5wLWJv35ZhAX5T2fxHfad6jZdDH9YQDCkCWVFxFYDcSgL6FbnmCGyehJb4puAhdUaEvBnnPe3dzDbJshZUxCpFFxquZbEP2NgzPg7terGjKDPCfdUZBEbMyLWTCm3eKWTgp8rkMK4PWCYAV3LFYtgEHf8e6YqAg6PfgvgTXCCg4UQwr5fp8NDtY3kPyYHNNtvNkUC7CDqewCakkBv2CpsRFVuLzH8aaUE6cgX3bgBvaGtgmKUHLyG3D6aCcAREAPm38fYXyerzfQtECDdQM8Duk2g8PwVMwfBuN83YuXsyy9gKEzM2HZCbAzPqKmufjcjHynRGtR5E3sMuC9Rs9aNbdMWj8sdqgupv4dEJXh
 
   ## RSA private key in PEM format. Used by Postal to acquire and renew
   ## certificates for the click-tracking-server from Let's Encrypt.
@@ -189,9 +189,8 @@ postal:
     -----END PRIVATE KEY-----
 
   ## Password for the SMTP server.
-  ## Should be changed from the default.
   ##
-  smtpPassword: F5inFQ#iockPA4#LrB%pZNWAYvJ9G&u6
+  smtpPassword: am7L*C39#AG=kBfmn4vR38gF2+jxJzJr
 
 ## Configuration values for the mariadb dependency.
 ## ref: https://github.com/kubernetes/charts/blob/master/stable/mariadb/README.md
@@ -202,9 +201,8 @@ mariadb:
   # nameOverride:
   rootUser:
     ## mariadb password for the root user.
-    ## should be changed from the default
     ##
-    password: BJDMgnUzKa73KkVxnNjlPn$tY8q$!hzo
+    password: X4X^%gT+t--DZ@F+%2c3yyfUQ-b6UjMZ
   replication:
     enabled: false
   slave:
@@ -241,12 +239,10 @@ rabbitmq: &rabbitmq
   replicaCount: 1
   rabbitmqUsername: postal
   ## rabbitmq password for the postal user.
-  ## should be changed from the default
   ##
-  rabbitmqPassword: IcBLuWCu0sA!C58OFjHY@lU!rwlBmCpn
+  rabbitmqPassword: zKJJ&CtT+PLe6FPn%wuL336&rKD@@k6b
   ## rabbitmq password for management operations.
-  ## should be changed from the default
   ##
-  managementPassword: nYMlZvTyKJvHleVC7mP%bLS$$Qyt3&f#
+  managementPassword: HCcpL%RyPw6L8byYF6Xdd36BE@gxYffE
 
 rabbitmq-ha: *rabbitmq

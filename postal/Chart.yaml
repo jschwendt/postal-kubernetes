@@ -3,7 +3,7 @@ name: postal
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
-version: 2.1.0
+version: 0.0.1
 home: https://github.com/jschwendt/postal-kubernetes
 sources:
   - https://github.com/linkyard/postal-kubernetes
@@ -27,12 +27,4 @@ type: application
 # incremented each time you make changes to the application. Versions are not expected to
 # follow Semantic Versioning. They should reflect the version the application is using.
 # It is recommended to use it with quotes.
-appVersion: "1.0.1"
-
-dependencies:
-- name: mariadb
-  version: 9.7.0
-  repository: https://charts.bitnami.com/bitnami
-- name: rabbitmq
-  version: 8.24.2
-  repository: https://charts.bitnami.com/bitnami
+appVersion: "2.1.0"
