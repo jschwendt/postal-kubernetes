@@ -3,11 +3,13 @@ kind: Service
 metadata:
   name: {{ template "postal.fullname" . }}-external
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
-    greeting: hello
-    version: one
+    app: {{ template "postal.name" . }}
+    component: postal
   ports:
-  - protocol: TCP
-    port: 60000
-    targetPort: 443
+  - name: web
+    port: 80
+    targetPort: web
+    protocol: TCP
+

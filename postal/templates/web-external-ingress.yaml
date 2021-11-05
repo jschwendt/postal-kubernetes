@@ -1,0 +1,18 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ template "postal.fullname" . }}
+  annotations:
+    kubernetes.io/ingress.class: addon-http-application-routing
+spec:
+  rules:
+    - host: postal.schwendt.com
+      http:
+        paths:
+          - backend: # How the ingress will handle the requests
+              service:
+               name: {{ template "postal.fullname" . }} # Which service the request will be forwarded to
+               port:
+                 name: web # Which port in that service
+            path: / # Which path is this rule referring to
+            pathType: Prefix # See more at https://kubernetes.io/docs/concepts/services-networking/ingress/#path-types
