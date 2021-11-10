@@ -58,7 +58,7 @@ postal:
 
         ## Enable management of the web certificate with cert-manager
         ##
-        enabled: false
+        enabled: true
 
         ## Arbitrary labels to add to the certificate
         ##
@@ -67,16 +67,16 @@ postal:
 
         ## Name of the issuer
         ##
-        # issuerName:
+        issuerName: self-signed
 
         ## Kind of the issuer
         ##
-        # issuerKind:
+        issuerKind: Issuer
 
       ## If cert-manager is not in use, name of an existing TLS
       ## secret to use for the ingress. Must be in the same namespace.
       ##
-      # existingTlsSecret: 
+      existingTlsSecret: false
 
   ## Configuration for Postal's SMTP server
   ##
@@ -96,7 +96,7 @@ postal:
 
       ## Enable management of the SMTP certificate with cert-manager
       ##
-      enabled: false
+      enabled: true
 
       ## Arbitrary labels to add to the certificate
       ##
@@ -105,17 +105,17 @@ postal:
 
       ## Name of the issuer
       ##
-      # issuerName:
+      issuerName: self-signed
 
       ## Kind of the issuer
       ##
-      # issuerKind:
+      issuerKind: Issuer
 
     ## If cert-manager is not in use, name of an existing TLS
     ## secret to use for the SMTP server. Must be in the same namespace.
     ## Will be mounted as a volume.
     ##     
-    # existingTlsSecret: 
+    existingTlsSecret: false
 
   ## RSA private key in PEM format used for DKIM signing.
   ## Should be changed from the default.
@@ -201,7 +201,7 @@ mariadb:
   # nameOverride:
   rootUser:
     ## mariadb password for the root user.
-    ##
+    ## random 10 or above character alphanumeric string
     password: X4X^%gT+t--DZ@F+%2c3yyfUQ-b6UjMZ
   replication:
     enabled: false
@@ -243,6 +243,6 @@ rabbitmq: &rabbitmq
   rabbitmqPassword: zKJJ&CtT+PLe6FPn%wuL336&rKD@@k6b
   ## rabbitmq password for management operations.
   ##
-  managementPassword: HCcpL%RyPw6L8byYF6Xdd36BE@gxYffE
+  managementPassword: flatPickle21
 
 rabbitmq-ha: *rabbitmq
