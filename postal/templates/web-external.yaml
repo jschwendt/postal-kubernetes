@@ -3,7 +3,7 @@ kind: Service
 metadata:
   name: {{ template "postal.fullname" . }}-external
 spec:
-  type: ClusterIP
+  type: LoadBalancer
   selector:
     app: {{ template "postal.name" . }}
     component: postal
