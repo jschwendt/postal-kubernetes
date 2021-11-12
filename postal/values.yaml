@@ -190,7 +190,7 @@ postal:
 
   ## Password for the SMTP server.
   ##
-  smtpPassword: am7L*C39#AG=kBfmn4vR38gF2+jxJzJr
+  smtpPassword: SMTPloginkindrEdSpirir
 
 ## Configuration values for the mariadb dependency.
 ## ref: https://github.com/kubernetes/charts/blob/master/stable/mariadb/README.md
@@ -199,10 +199,10 @@ mariadb:
   ## Override the name of the mariadb dependency
   ##
   # nameOverride:
-  rootUser:
+  auth:
     ## mariadb password for the root user.
     ## random 10 or above character alphanumeric string
-    password: X4X^%gT+t--DZ@F+%2c3yyfUQ-b6UjMZ
+    rootPassword: somethingTesty44
   replication:
     enabled: false
   slave:
@@ -238,11 +238,17 @@ rabbitmq: &rabbitmq
       }
   replicaCount: 1
   rabbitmqUsername: postal
-  ## rabbitmq password for the postal user.
-  ##
-  rabbitmqPassword: zKJJ&CtT+PLe6FPn%wuL336&rKD@@k6b
-  ## rabbitmq password for management operations.
-  ##
+  
+  rabbitmqPassword: spaghetti12
+  
   managementPassword: flatPickle21
+  
+  auth:
+    ## rabbitmq password for the postal user.
+    ##
+    username: postal
+    ## rabbitmq password for management operations.
+    ##
+    password: spaghetti12
 
 rabbitmq-ha: *rabbitmq
