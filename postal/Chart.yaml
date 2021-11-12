@@ -9,8 +9,8 @@ sources:
   - https://github.com/linkyard/postal-kubernetes
 keywords:
   - postal
-maintainers:
-engine: gotpl
+# maintainers:
+# engine: gotpl
 description: A complete and fully featured mail server
 
 # A chart can be either an 'application' or a 'library' chart.
