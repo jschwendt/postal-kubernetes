@@ -9,7 +9,9 @@ sources:
   - https://github.com/linkyard/postal-kubernetes
 keywords:
   - postal
-# maintainers:
+maintainers: 
+  - name: Giovanni Headley
+    email: giovanniheadley@gmail.com
 # engine: gotpl
 description: A complete and fully featured mail server
 
@@ -28,3 +30,11 @@ type: application
 # follow Semantic Versioning. They should reflect the version the application is using.
 # It is recommended to use it with quotes.
 appVersion: "2.1.0"
+
+dependencies:
+- name: mariadb
+  version: 9.7.0
+  repository: https://charts.bitnami.com/bitnami
+- name: rabbitmq
+  version: 8.24.2
+  repository: https://charts.bitnami.com/bitnami

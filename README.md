@@ -1,108 +1,119 @@
-# Postal on kubernetes
+# postal
 
-A docker-image and helm-chart to deploy [Postal](https://postal.atech.media/) on kubernetes.
+A helm-chart to deploy [Postal](https://postal.atech.media/) on kubernetes.
 
-Please refer to the individual documentation for the docker-image and the helm-chart:
+## Introduction
 
-- [docker-image](docker/README.md)
-- [helm-chart](helm/postal/README.md)
+This chart bootstraps a deployment of Postal, MariaDB and RabbitMQ on a
+[Kubernetes](http://kubernetes.io) cluster using the [Helm](https://helm.sh) package manager.
 
-Getting the Docker image and helm chart:
+## Prerequisites
 
-- The docker-image is available on Docker Hub: [linkyard/postal](https://hub.docker.com/r/linkyard/postal/)
-- The helm chart is available at [charts.linkyard.ch](https://charts.linkyard.ch)
+- Kubernetes 1.9
+- PV provisioner support in the underlying infrastructure
 
-## Roadmap
+## Optional prerequisites
 
-- Contribute our little fixes to upstream
-- Add the ability to start individual Portal processes for easier HA setups and scaling
-- Add meaningful readiness and liveness probes
+- An ingress controller
+- A functioning [cert-manager](https://github.com/jetstack/cert-manager) for certificate management
 
+## Installing the Chart
 
-<!-- TODO integrate below into README.md -->
+To install the chart with the release name `my-release`, add the linkyard helm charts repository:
 
-# Docker-Image for Postal
-
-This docker-image is based on [ruby:2.3-alpine](https://hub.docker.com/_/ruby/) and uses packages published by aTech Media.
-
-Postal runs as user `postal` with uid `20000` and group id `20000`, exposed ports are `25` (SMTP) and `5000` (Postal web UI). Logs are printed to standard-out and saved as files in `/opt/postal/log` (log-rotation as per Postal's defaults).
-
-## Configuration
-
-This docker-image writes Postal's configuration to a YAML file by using some values from environment variables and others from a YAML file mounted at `USER_CONFIG_PATH` (optional):
-
-- Read Postal's default configuration from `/opt/postal/app/config/postal.example.yml`
-- Read our default configuration [default-config.yml](assets/default-config.yml)
-- Read the configuration file mounted at `USER_CONFIG_PATH`. If you don't specify that
-  environment variable, it will be ignored
-- Read a set of environment variables and convert them into a YAML file
-
-Those four configuration sources are deep-merged (in order) into the final `/opt/postal/config/postal.yml`.
-
-Part of the `default-config.yaml` is an override of the machine's nameservers to the IPv4 addresses of Google's public DNS servers (see [Overriding nameservers](#overriding-nameservers)).
-
-The following environment variables are required:
-
-- `MARIADB_HOST`: Hostname of the MariaDB database to connect to.
-- `MARIADB_USER`: Username for the MariaDB database.
-- `MARIADB_PASSWORD`: Password for the MariaDB user.
-- `RABBITMQ_HOST`: Hostname of the RabbitMQ to connect to.
-- `RABBITMQ_USER`: Username for RabbitMQ.
-- `RABBITMQ_PASSWORD`: Password for the RabbitMQ user.
-- `RAILS_SECRET_KEY`: The secret key for rails. Generate a random alphanumeric key (e.g.
-  with `openssl rand -hex 256`)
-- `SIGNING_KEY`: Base64-encoded RSA private key in PEM format. Used for DKIM signing.
-- `LETS_ENCRYPT_KEY`: Base64-encoded RSA private key in PEM format. Used by Postal to
-  acquire and renew certificates for the click-tracking-server from Let's Encrypt.
-
-The following environment variables are supported but not required:
-
-- `USER_CONFIG_PATH`: Path to partial Postal YAML configuration that will be merged
-  into the configuration after default values are applied. Use this YAML configuration
-  for all your settings that aren't secrets, e.g. your DNS records.
-- `SMTP_USER`: Username for the SMTP server.
-- `SMTP_PASSWORD`: Password for the SMTP user.
-
-You can generate and base64-encode the DKIM signing key and Let's Encrypt key like this:
-
-```bash
-# set to signing_key or lets_encrypt_key
-KEYNAME=signing_key
-# set to 1024 only if your DNS provider has trouble with long DKIM signatures
-# set to 4096 for Let's Encrypt and if your DNS provider can handle such a long signature
-KEYLENGTH=2048
-
-openssl genpkey -algorithm RSA -out ${KEYNAME}.pem -pkeyopt rsa_keygen_bits:${KEYLENGTH}
-echo -e "\n$(echo ${KEYNAME} | tr a-z A-Z)=$(openssl enc -base64 -A -in ${KEYNAME}.pem)\n"
+```console
+helm repo add linkyard http://charts.linkyard.ch
 ```
 
-## Additional Postal configuration
+and install the chart:
 
-### Overriding nameservers
+```console
+helm install --name my-release linkyard/postal
+```
 
-This docker-image adds support for specifying a list of DNS servers used by Postal when it verifies DNS records for one of your domains.
+The command deploys postal on the Kubernetes cluster in the default confiugraiotn. The [configuration](#confguration)
+section lists parameters that can be configured during installation.
 
-If you want to override the default resolver on the machine Postal is running on, you can add an array of IP addresses as a `nameservers` property in the `general` section of your configuration.
+> **Tip**: List all releases using `helm list`
+
+## Uninstalling the Chart
+
+To uninstall/delete the `my-release` deployment:
+
+```console
+helm delete my-release
+```
+
+The command removes all the Kubernetes components associated with the chart and deletes the release.
+
+## Configuration - MariaDB and RabbitMQ
+
+This chart pulls in [stable/mariadb](https://github.com/helm/charts/blob/master/stable/mariadb) and
+[stable/rabbitmq-ha](https://github.com/helm/charts/tree/master/stable/rabbitmq-ha) as dependencies.
+
+Please refer to the respective documentation for configuration parameters of those components.
+
+### Note about configuring RabbitMQ
+
+If you want to override any of RabbitMQ's configuration parameters, make sure your `values.yaml`
+contains a YAML node `rabbitmq` with an anchor `&rabbitmq` that is referenced in a `rabbitmq-ha`
+node.
+
+We do this, because referencing values of sub-charts with a dash in the name (i.e. `rabbitmq-ha`)
+can be difficult and dashes in chart names are discouraged by helm ([helm/#4379](https://github.com/helm/helm/pull/4379)).
 
 Example:
 
 ```yaml
-general:
-  nameservers:
-    - "8.8.8.8"
-    - "8.8.4.4"
+rabbitmq: &rabbitmq
+  replicaCount: 3
+rabbitmq-ha: *rabbitmq
 ```
 
-## Behaviour
+## Configuration
 
-On startup, the following actions will be performed:
+We set the following default configuration parameters for MariaDB and RabbitMQ:
 
-- Check if MariaDB is up. If it is not, exit with status code `1`
-- Check if the `postal` schema exists in MariaDB. If it does not, create the `postal` database.
-- Check if Postal's database is initialized. If it is not, run `postal initialize`.
-- Run `postal start`
+Parameter | Description | Default
+--- | --- | ---
+`mariadb.rootUser.password` | Password for the MariaDB root user. Change this from the default! | see [values.yaml](values.yaml)
+`mariadb.replication.enabled` | Enable MariaDB replication | `false`
+`mariadb.slave.replicas` | Number of MariaDB slave replicas | `0`
+`mariadb.metrics.enabled` | Enable prometheus metrics | `true`
+`rabbitmq.definitions.vhosts` | RabbitMQ vhosts definitions. Our default adds one for Postal. | see [values.yaml](values.yaml)
+`rabbitmq.definitions.permissions` | RabbitMQ vhosts permissions. Our default adds permission to the `/postal` vhost for the `postal` user. | see [values.yaml](values.yaml)
+`rabbitmq.replicaCount` | Number of RabbitMQ replicas. | `1`
+`rabbitmq.rabbitmqUsername` | Username for RabbitMQ. | `postal`
+`rabbitmq.rabbitmqPassword` | Password for RabbitMQ. Change this from the default! | see [values.yaml](values.yaml)
+`rabbitmq.managementPassword` | Password for RabbitMQ management operations. Change this from the default! | see [values.yaml](values.yaml)
 
-## Attribution
+The following table lists the configurable parameters of the postal chart and their default values.
 
-This docker-image is based on the docker-image from [CatDeployed](https://github.com/CatDeployed/docker-postal).
-
+Parameter | Description | Default
+--- | --- | ---
+`postal.nameOverride` | override the name of the chart | ``
+`postal.config` | A postal configuration yaml to apply on top of postal's default configuration. See [Postal's default configuration](https://github.com/atech/postal/blob/master/config/postal.defaults.yml) for available options. | `{}`
+`postal.image` | postal container image repository | `linkyard/postal`
+`postal.imageTag` | postal container image tag | `1.0.0`
+`postal.imagePullPolicy` | postal container image pull policy | `Always`
+`postal.resources` | CPU/Memory resource requests/limits  | `{}`
+`postal.signingKey` | RSA private key in PEM format used for DKIM signing. Change this from the default! | see [values.yaml](values.yaml)
+`postal.railsSecretKey` | The secret key for rails. Change this from the default! | see [values.yaml](values.yaml)
+`postal.letsEncryptKey` | RSA private key in PEM format. Used by Postal to acquire and renew certificates for the click-tracking-server from Let's Encrypt. Change this from the default! | see [values.yaml](values.yaml)
+`postal.smtpPassword` | Password for the SMTP server. Change this from the default! | see [values.yaml](values.yaml)
+`postal.web.ingress.enabled` | if an `ingress` resource should be deployed for the web interface | `true`
+`postal.web.ingress.hostname` | public hostname for the web interface; this is a required value  | ``
+`postal.web.ingress.ingressClass` | ingress class to use | `nginx`
+`postal.web.ingress.tlsEnabled` | enable TLS on the ingress | `true`
+`postal.web.ingress.certManager.enabled` | enable management of the TLS secret with [cert-manager](https://github.com/jetstack/cert-manager) | `true`
+`postal.web.ingress.certManager.ingressClass` | ingress class to use for HTTP01 challenge | `nginx`
+`postal.web.ingress.certManager.issuerName` | name of the cert-manager issuer; this is a required value | ``
+`postal.web.ingress.certManager.issuerKind` | kind of the cert-manager issuer; this is a required value | ``
+`postal.web.ingress.existingTlsSecret` | name of an existing TLS secret to use for the ingress (if cert-manager is not used); must be in the same namespace | ``
+`postal.smtp.hostname` | public hostname of postal's SMTP server; this is a required value | ``
+`postal.smtp.serviceType` | what kind of service the SMTP server is exposed as | `LoadBalancer`
+`postal.smtp.certManager.enabled` | enable management of the TLS secret with [cert-manager](https://github.com/jetstack/cert-manager) | `true`
+`postal.smtp.certManager.ingressClass` | ingress class to use for HTTP01 challenge | `nginx`
+`postal.smtp.certManager.issuerName` | name of the cert-manager issuer; this is a required value | ``
+`postal.smtp.certManager.issuerKind` | kind of the cert-manager issuer; this is a required value | ``
+`postal.smtp.existingTlsSecret` | name of an existing TLS secret to use for the SMTP server (if cert-manager is not used); must be in the same namespace | ``
