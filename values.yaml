@@ -5,7 +5,7 @@
 postal:
   ## Override the name of the Chart.
   ##
-  # nameOverride: Orrick Postal Test
+  # nameOverride: Postal Test
 
   ## A postal configuration yaml to apply on top of postal's default configuration
   # needed for setting up mx records etc.
@@ -27,9 +27,9 @@ postal:
   image: descifle/postal-revamp
 
   ## Postal image version.
-  ## ref: https://hub.docker.com/r/linkyard/postal/tags/
+  ## ref: https://hub.docker.com/r/descifle/postal-revamp/tags
   ##
-  # imageTag: "1.0.2"
+  # imageTag: "0.1.0"
   imageTag: "latest"
 
   ## Specify a imagePullPolicy: 'Always' if imageTag is 'latest', else set to 'IfNotPresent'.
@@ -78,11 +78,11 @@ postal:
 
         ## Name of the issuer
         ##
-        issuerName: letsencrypt
+        # issuerName: letsencrypt
 
         ## Kind of the issuer
         ##
-        issuerKind: ClusterIssuer
+        # issuerKind: ClusterIssuer
 
       ## If cert-manager is not in use, name of an existing TLS
       ## secret to use for the ingress. Must be in the same namespace.
@@ -116,11 +116,11 @@ postal:
 
       ## Name of the issuer
       ##
-      issuerName: letsencrypt
+      # issuerName: letsencrypt
 
       ## Kind of the issuer
       ##
-      issuerKind: ClusterIssuer
+      # issuerKind: ClusterIssuer
 
     ## If cert-manager is not in use, name of an existing TLS
     ## secret to use for the SMTP server. Must be in the same namespace.
@@ -199,7 +199,7 @@ postal:
     -----END PRIVATE KEY-----
   ## Password for the SMTP server.
   ##
-  smtpPassword: assdSAD23sass
+  smtpPassword: defaultPass010
 
 ## SUB-CHART VALUES
 ## Change these or update as neccessary when sub-charts are updated
@@ -214,7 +214,7 @@ mariadb:
   auth:
     ## mariadb password for the root user.
     ## random 10 or above character alphanumeric string
-    rootPassword: DASFS$DSdsadsAWS23
+    rootPassword: defaultPass010
   replication:
     enabled: false
   slave:
@@ -234,11 +234,10 @@ rabbitmq:
   
   auth:
     ## rabbitmq username for the rabbitmq user.
-    ## anything but "postal"
     username: postal
     ## rabbitmq password for the user.
     ##
-    password: ASDSAC3sdaS33qwaS
+    password: defaultPass010
   
   extraConfiguration: |-
     default_vhost = /postal
