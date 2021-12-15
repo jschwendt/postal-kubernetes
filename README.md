@@ -40,7 +40,7 @@ helm install my-ingress ingress-nginx/ingress-nginx `
      --set defaultBackend.nodeSelector."beta\.kubernetes\.io/os"=linux
 ```
 
-Update your domain info and dns using the IP from ingress controller or what you choose to use
+Update your domain info using the IP from ingress controller to add to your @/* (A) dns record
 
 Install cert-manager
 
@@ -51,8 +51,14 @@ kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1.6
 Install our included issuer or create your own https://cert-manager.io/docs/concepts/issuer/
 
 ```console
-kubectl apply -f issuer.yaml
+kubectl apply -f issuer-dev.yaml 
 ```
+
+When changing from dev to prod
+- Uninstall postal helm chart
+- Delete clusterissuer and it's secret from cert-manager namespace
+- Delete postal-smtp-tls and postal-web-tls from default namespace
+- Install dev or prod issuer then install as normal
 
 Override ingress-controller values to add smtp port
  
@@ -60,11 +66,11 @@ Override ingress-controller values to add smtp port
 helm upgrade --install -n ingress ingress-controller ingress-nginx/ingress-nginx --values nginxvalues.yaml --wait
 ```
 
-Change values in values.yaml to match your domain/dns/installation settings and change default passwords
+- Change values in values.yaml to match your domain/dns/installation settings
 
-Change default passwords
+- Change default passwords
 
-and install the chart:
+- and install the chart
 
 ```console
 helm install my-release .
