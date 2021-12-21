@@ -21,9 +21,7 @@ This chart bootstraps a deployment of Postal, MariaDB and RabbitMQ on a
 
 To install the chart with the release name `my-release`, add the helm charts repository:
 
-```console
-clone this repository
-```
+Clone this repository
 
 Setup an ingress-controller
 
@@ -40,7 +38,14 @@ helm install my-ingress ingress-nginx/ingress-nginx `
      --set defaultBackend.nodeSelector."beta\.kubernetes\.io/os"=linux
 ```
 
+Override ingress-controller values to add smtp port
+ 
+```console
+helm upgrade --install -n ingress my-ingress ingress-nginx/ingress-nginx --values nginxvalues.yaml --wait
+```
+
 Update your domain info using the IP from ingress controller to add to your @/* (A) dns record
+[Follow this link if you are unsure about dns records](https://www.apexdigital.co.nz/blog/wildcard-versus-exact-match-dns-records/)
 
 Install cert-manager
 
@@ -50,22 +55,28 @@ kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1.6
 
 Install our included issuer or create your own https://cert-manager.io/docs/concepts/issuer/
 
+Before applying issuer make sure to change email to get cert expiration info
+
 ```console
 kubectl apply -f issuer-dev.yaml 
 ```
 
 When changing from dev to prod
-- Uninstall postal helm chart
+- Uninstall postal helm chart ( helm uninstall my-release )
 - Delete clusterissuer and it's secret from cert-manager namespace
-- Delete postal-smtp-tls and postal-web-tls from default namespace
-- Install dev or prod issuer then install as normal
-
-Override ingress-controller values to add smtp port
- 
 ```console
-helm upgrade --install -n ingress ingress-controller ingress-nginx/ingress-nginx --values nginxvalues.yaml --wait
+     kubectl delete clusterissuer letsencrypt
+     kubectl delete secret letsencrypt -n cert-manager
 ```
-
+- Delete postal-smtp-tls and postal-web-tls from default namespace
+```console
+     kubectl delete secret postal-web-tls
+     kubectl delete secret postal-smtp-tls
+```
+- Install dev or prod issuer then install as normal
+```console
+     kubectl apply -f issuer-prod.yaml 
+```
 - Change values in values.yaml to match your domain/dns/installation settings
 
 - Change default passwords
@@ -80,6 +91,14 @@ The command deploys postal on the Kubernetes cluster in the default configuratio
 section lists parameters that can be configured during installation.
 
 > **Tip**: List all releases using `helm list`
+
+Once installed you must create an admin user. To do that you must enter the postal
+main pod kubectl exec and create one.
+```console
+     kubectl get pods
+     kubectl exec --stdin --tty my-release -- /bin/bash
+     postal make-user
+```
 
 ## Uninstalling the Chart
 

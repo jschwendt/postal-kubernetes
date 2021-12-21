@@ -78,11 +78,11 @@ postal:
 
         ## Name of the issuer
         ##
-        # issuerName: letsencrypt
+        issuerName: letsencrypt
 
         ## Kind of the issuer
         ##
-        # issuerKind: ClusterIssuer
+        issuerKind: ClusterIssuer
 
       ## If cert-manager is not in use, name of an existing TLS
       ## secret to use for the ingress. Must be in the same namespace.
@@ -116,11 +116,11 @@ postal:
 
       ## Name of the issuer
       ##
-      # issuerName: letsencrypt
+      issuerName: letsencrypt
 
       ## Kind of the issuer
       ##
-      # issuerKind: ClusterIssuer
+      issuerKind: ClusterIssuer
 
     ## If cert-manager is not in use, name of an existing TLS
     ## secret to use for the SMTP server. Must be in the same namespace.
