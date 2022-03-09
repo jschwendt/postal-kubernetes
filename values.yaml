@@ -5,20 +5,32 @@
 postal:
   ## Override the name of the Chart.
   ##
-  # nameOverride:
+  # nameOverride: Postal Test
 
   ## A postal configuration yaml to apply on top of postal's default configuration
+  # needed for setting up mx records etc.
   ##
-  # config: {}
+  config: 
+    dns:
+      mx_records:
+        - mx.postal.example.com
+      smtp_server_hostname: postal.example.com
+      spf_include: spf.postal.example.com
+      return_path: rp.postal.example.com
+      route_domain: routes.postal.example.com
+      track_domain: track.postal.example.com
+      dkim_identifier: postal
+      domain_verify_prefix: postal-verification
 
   ## Postal image.
   ##
-  image: linkyard/postal
+  image: descifle/postal-revamp
 
   ## Postal image version.
-  ## ref: https://hub.docker.com/r/linkyard/postal/tags/
+  ## ref: https://hub.docker.com/r/descifle/postal-revamp/tags
   ##
-  imageTag: "1.0.2"
+  # imageTag: "0.1.0"
+  imageTag: "latest"
 
   ## Specify a imagePullPolicy: 'Always' if imageTag is 'latest', else set to 'IfNotPresent'.
   ## ref: https://kubernetes.io/docs/user-guide/images/#pre-pulling-images
@@ -36,7 +48,7 @@ postal:
     ingress:
       ## Hostname for Postal's web component
       ##
-      hostname: postal.schwendt.com
+      hostname: postal.example.com
 
       ## Enable ingress
       ##
@@ -48,7 +60,7 @@ postal:
       
       ## Enable TLS for the ingress
       ##
-      tlsEnabled: false
+      tlsEnabled: true
 
       ## Configuration for cert-manager.
       ## ref: https://github.com/jetstack/cert-manager
@@ -57,7 +69,7 @@ postal:
 
         ## Enable management of the web certificate with cert-manager
         ##
-        enabled: false
+        enabled: true
 
         ## Arbitrary labels to add to the certificate
         ##
@@ -66,11 +78,11 @@ postal:
 
         ## Name of the issuer
         ##
-        # issuerName:
+        issuerName: letsencrypt
 
         ## Kind of the issuer
         ##
-        # issuerKind:
+        issuerKind: ClusterIssuer
 
       ## If cert-manager is not in use, name of an existing TLS
       ## secret to use for the ingress. Must be in the same namespace.
@@ -82,11 +94,11 @@ postal:
   smtp:
     ## Hostname for Postal's SMTP server
     ##
-    hostname: postal.schwendt.com
+    hostname: postal.example.com
 
     ## What kind of service the SMTP server is exposed as
     ##
-    serviceType: LoadBalancer
+    serviceType: ClusterIP
 
     ## Configuration for cert-manager.
     ## ref: https://github.com/jetstack/cert-manager
@@ -95,7 +107,7 @@ postal:
 
       ## Enable management of the SMTP certificate with cert-manager
       ##
-      enabled: false
+      enabled: true
 
       ## Arbitrary labels to add to the certificate
       ##
@@ -104,11 +116,11 @@ postal:
 
       ## Name of the issuer
       ##
-      # issuerName:
+      issuerName: letsencrypt
 
       ## Kind of the issuer
       ##
-      # issuerKind:
+      issuerKind: ClusterIssuer
 
     ## If cert-manager is not in use, name of an existing TLS
     ## secret to use for the SMTP server. Must be in the same namespace.
@@ -148,11 +160,9 @@ postal:
     w6fEFjK5DLDT0xoAhAU+2DxV6qfhqN6iIhG9Ct02lTqNeY6f4jcGp9zhK7Z0Q3p+
     vwugwQfd8awjqId0J2+ozEs=
     -----END PRIVATE KEY-----
-
   ## The secret key for rails.
-  ## Should be changed from the default.
   ##  
-  railsSecretKey: a15278f9d5b30e0c2bae4c1051eff9abd4e723dc4636a061926c9ba70242192ec75bb127de0efc42a113d65ec902898d060b9a9a9078acee2dde6c40875c3b176fddba03989684f44f864c78194c28d55be6f1991bd7cfa6b93da78ee7a41e0b870321488952b12d985bcf306273d9cdd36c6ca455399dfd4796388545f8ec5acb385ff3c057209ddde254e18df143d0c4375cdffe2b0f4d82f0c501d767bfb33a561c0c5d0c46b906ef0071e29ef0f47acee1ca395c9362f924523f70fc9bd5e9d03956af52fc401c0eee307783be5762ebb1c94bd755b8a6a9b17051d7a63a8f1c0344a92a3756b3f29a25b45074d6f9ceb6ca7d92da0a941431dbfdd45e
+  railsSecretKey: aVSXuhVaXpbVdUas3XDEh6PSRewcEVqkN35mfWThXsqtjTxW8TuAU45rBaJxeBznQqa5BvD4dXtyDPvCYZaU9k3cR2xyZFnQCfQ8qVkVXaxK9LQWNkx3J2WvgwNfbP6GPK3L7JZR7yBRsrmE5avy3e5wLWJv35ZhAX5T2fxHfad6jZdDH9YQDCkCWVFxFYDcSgL6FbnmCGyehJb4puAhdUaEvBnnPe3dzDbJshZUxCpFFxquZbEP2NgzPg7terGjKDPCfdUZBEbMyLWTCm3eKWTgp8rkMK4PWCYAV3LFYtgEHf8e6YqAg6PfgvgTXCCg4UQwr5fp8NDtY3kPyYHNNtvNkUC7CDqewCakkBv2CpsRFVuLzH8aaUE6cgX3bgBvaGtgmKUHLyG3D6aCcAREAPm38fYXyerzfQtECDdQM8Duk2g8PwVMwfBuN83YuXsyy9gKEzM2HZCbAzPqKmufjcjHynRGtR5E3sMuC9Rs9aNbdMWj8sdqgupv4dEJXh
 
   ## RSA private key in PEM format. Used by Postal to acquire and renew
   ## certificates for the click-tracking-server from Let's Encrypt.
@@ -187,24 +197,24 @@ postal:
     vOe3LccGhMWuTm3Q0p4wjl5BmZk/VfIJ2Ri7bNDW3jF/oTsh4ecMDtXjafBRo1u9
     NkSCMjoXo/d/HBlllJpiFFl6
     -----END PRIVATE KEY-----
-
   ## Password for the SMTP server.
-  ## Should be changed from the default.
   ##
-  smtpPassword: F5inFQ#iockPA4#LrB%pZNWAYvJ9G&u6
+  smtpPassword: defaultPass010
 
+## SUB-CHART VALUES
+## Change these or update as neccessary when sub-charts are updated
+## These are the login credentials and settings for the sub-charts
 ## Configuration values for the mariadb dependency.
-## ref: https://github.com/kubernetes/charts/blob/master/stable/mariadb/README.md
+## ref: https://github.com/bitnami/charts/blob/master/bitnami/mariadb/README.md
 ##
 mariadb:
   ## Override the name of the mariadb dependency
   ##
   # nameOverride:
-  rootUser:
+  auth:
     ## mariadb password for the root user.
-    ## should be changed from the default
-    ##
-    password: BJDMgnUzKa73KkVxnNjlPn$tY8q$!hzo
+    ## random 10 or above character alphanumeric string
+    rootPassword: defaultPass010
   replication:
     enabled: false
   slave:
@@ -212,41 +222,25 @@ mariadb:
   metrics:
     enabled: true
 
-## Configuration values for the rabbitmq-ha dependency.
-## ref: https://github.com/kubernetes/charts/blob/master/stable/rabbitmq-ha/README.md
+## Configuration values for the rabbitmq dependency.
+## ref: https://github.com/bitnami/charts/blob/master/bitnami/rabbitmq/README.md
 ##
-## NOTE: If you override any of those values, make sure your values.yaml
-## include the following:
-## rabbitmq: &rabbitmq
-##   myKey: myValue
-## rabbitmq-ha: *rabbitmq
-## https://github.com/helm/helm/pull/4379
-rabbitmq: &rabbitmq
+rabbitmq:
   ## Override the name of the rabbitmq dependency
   ##
   # nameOverride:
-  definitions:
-    vhosts: |-
-      {
-        "name": "/postal"
-      }
-    permissions: |-
-      {
-        "user": "postal",
-        "vhost": "/postal",
-        "configure": ".*",
-        "write": ".*",
-        "read": ".*"
-      }
-  replicaCount: 1
-  rabbitmqUsername: postal
-  ## rabbitmq password for the postal user.
-  ## should be changed from the default
-  ##
-  rabbitmqPassword: IcBLuWCu0sA!C58OFjHY@lU!rwlBmCpn
-  ## rabbitmq password for management operations.
-  ## should be changed from the default
-  ##
-  managementPassword: nYMlZvTyKJvHleVC7mP%bLS$$Qyt3&f#
 
-rabbitmq-ha: *rabbitmq
+  replicaCount: 1
+  
+  auth:
+    ## rabbitmq username for the rabbitmq user.
+    username: postal
+    ## rabbitmq password for the user.
+    ##
+    password: defaultPass010
+  
+  extraConfiguration: |-
+    default_vhost = /postal
+    default_permissions.configure = .*
+    default_permissions.read = .*
+    default_permissions.write = .*

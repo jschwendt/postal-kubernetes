@@ -1,0 +1,21 @@
+apiVersion: v2
+name: postal
+version: 0.1.0
+home: https://github.com/jschwendt/postal-kubernetes
+sources:
+  - https://github.com/linkyard/postal-kubernetes
+keywords:
+  - postal
+maintainers: 
+  - name: Giovanni Headley
+    email: giovanniheadley@gmail.com
+description: A complete and fully featured mail server
+type: application
+appVersion: "2.1.0"
+dependencies:
+- name: mariadb
+  version: 9.7.0
+  repository: https://charts.bitnami.com/bitnami
+- name: rabbitmq
+  version: 8.24.2
+  repository: https://charts.bitnami.com/bitnami

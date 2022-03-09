@@ -1,5 +1,5 @@
 {{- if .Values.postal.web.ingress.enabled }}
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {{ template "postal.fullname" . }}-web
@@ -11,6 +11,7 @@ metadata:
     release: {{ .Release.Name }}
   annotations:
     kubernetes.io/ingress.class: {{ .Values.postal.web.ingress.ingressClass }}
+    cert-manager.io/cluster-issuer: letsencrypt
 spec:
   {{- if .Values.postal.web.ingress.tlsEnabled }}
   tls:
@@ -27,7 +28,10 @@ spec:
     http:
       paths:
       - path: /
+        pathType: Prefix
         backend:
-          serviceName: {{ template "postal.fullname" . }}-web
-          servicePort: web
+          service:
+            name: {{ template "postal.fullname" . }}-web
+            port: 
+              number: 5000
 {{- end }}
